@@ -15,7 +15,7 @@ pipeline {
     post {
         always {
             // Add post-build action to analyze DependencyCheck reports using the Warnings Next Generation Plugin
-            recordIssues enabledForFailure: true, tool: dependencyCheck()
+            recordIssues enabledForFailure: true, tool: dependencyCheck(patterns:'**/dependency-check-report.json')
         }
     }
 }
