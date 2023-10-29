@@ -1,26 +1,31 @@
 pipeline {
-  agent any
-  stages {
-    stage('Build') {
-      steps {
-        sh '/var/jenkins_home/apache-maven-3.9.5/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore'
-      }
+    agent any
+
+    stages {
+        stage('OWASP DependencyCheck') {
+            steps {
+                script {
+                    // Run OWASP DependencyCheck with additional arguments
+                    dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASP Dependency-Check Vulnerabilities'
+                }
+            }
+        }
     }
-    stage('Analysis') {
-      steps {
-        sh '/var/jenkins_home/apache-maven-3.9.5/bin/mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs'
-      }
+
+    post {
+        always {
+            // Add post-build action to analyze DependencyCheck reports using the Warnings Next Generation Plugin
+            recordIssues(
+                tools: [dependencyCheck(pattern: '**/dependency-check-report.xml')],
+                // Customize other settings as needed
+            )
+        }
     }
-  }
-  post {
-    always {
-      junit testResults: '**/target/surefire-reports/TEST-*.xml'
-      recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
-      recordIssues enabledForFailure: true, tool: checkStyle()
-      recordIssues enabledForFailure: true, tool: spotBugs(pattern:
-        '**/target/findbugsXml.xml')
-      recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-      recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-    }
-  }
 }
+
+
+
+
+
+
+
