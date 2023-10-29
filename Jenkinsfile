@@ -16,6 +16,7 @@ pipeline {
         always {
             // Add post-build action to analyze DependencyCheck reports using the Warnings Next Generation Plugin
             recordIssues enabledForFailure: true, tool: owaspDependencyCheck(patterns:'**/dependency-check-report.json')
+            recordIssues enabledForFailure: true, tools: [java(), javaDoc()]
         }
     }
 }
