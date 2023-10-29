@@ -15,7 +15,7 @@ pipeline {
     post {
         always {
             // Add post-build action to analyze DependencyCheck reports using the Warnings Next Generation Plugin
-            recordIssues(tools: [dependencyCheck()])
+            recordIssues(tools: [dependencyCheck(additionalArguments: '--format HTML --format XML', odcInstallation: 'OWASP Dependency-Check Vulnerabilities')])
         }
     }
 }
