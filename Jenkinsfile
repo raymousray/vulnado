@@ -15,13 +15,7 @@ pipeline {
     post {
         always {
             // Add post-build action to analyze DependencyCheck reports using the Warnings Next Generation Plugin
-            recordIssues(
-                tools: [dependencyCheck()],
-                aggregatingResults: true, // Aggregate results if needed
-                ignoreFailedBuilds: false, // Ignore failed builds during analysis
-                sourceCodeEncoding: 'UTF-8', // Specify source code encoding
-                // Add more customization options as needed
-            )
+            recordIssues(tools: [dependencyCheck()])
         }
     }
 }
